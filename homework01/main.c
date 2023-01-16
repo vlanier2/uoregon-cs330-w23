@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -68,6 +69,27 @@ void usage(int argc, char** argv)
 
 void find_file(char* dir_name, char* file_to_find)
 {
-	// TODO
-}
+	DIR* dp;
+	struct dirent* dirp;
 
+	dp = opendir(dir_name);
+
+	while ((dirp = readdir(dp)) != NULL) {
+
+		//fprintf(stdout, "Found %s in %s\n", dirp->d_name, dir_name);
+
+		if (dirp->d_type == DT_DIR 
+			&& strcmp(dirp->d_name, ".") 
+			&& strcmp(dirp->d_name, "..")) {
+			char path[4096];
+			sprintf(path, "%s/%s", dir_name, dirp->d_name);
+			find_file(path, file_to_find);
+		}
+
+		if (!(strcmp(file_to_find, dirp->d_name))) {
+			fprintf(stdout, "Found %s in %s\n", file_to_find, dir_name);
+		}
+	}
+
+	closedir(dp);
+}
