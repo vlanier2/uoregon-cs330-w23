@@ -1,4 +1,6 @@
-#define _DEFAULT_SOURCE
+#define _DEFAULT_SOURCE // This is a fix for the DT_DIR not compiling with c11
+						// Everything else compiles fine with c11
+						// hopefully this is not needed in future projects?
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -71,17 +73,13 @@ void find_file(char* dir_name, char* file_to_find)
 {
 	DIR* dp;
 	struct dirent* dirp;
-
+	char path[4096];
 	dp = opendir(dir_name);
 
 	while ((dirp = readdir(dp)) != NULL) {
-
-		//fprintf(stdout, "Found %s in %s\n", dirp->d_name, dir_name);
-
 		if (dirp->d_type == DT_DIR 
 			&& strcmp(dirp->d_name, ".") 
 			&& strcmp(dirp->d_name, "..")) {
-			char path[4096];
 			sprintf(path, "%s/%s", dir_name, dirp->d_name);
 			find_file(path, file_to_find);
 		}
