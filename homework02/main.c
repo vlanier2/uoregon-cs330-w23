@@ -39,7 +39,29 @@ void usage(int argc, char** argv)
  */
 int get_num_ints(char** argv)
 {
-  /* TODO */
+    FILE *file_1, *file_2;
+    int error = 0;
+    int n_integers = 0;
+    char *buffer[MAX_NUM_LENGTH];
+    file_1 = fopen(argv[1], "r");
+    file_2 = fopen(argv[2], "r");
+
+    if (file_1 == NULL || file_2 == NULL) {
+        error = 1;
+    }
+    else {
+        while (fgets(buffer, sizeof(buffer), file_1) != NULL) {
+            n_integers++;
+            if (fgets(buffer, sizeof(buffer), file_2) == NULL) {
+
+            }
+        }
+
+    }
+
+    fclose(file_1);
+    fclose(file_2);
+    if (error) exit(EXIT_FAILURE);
 }
 
 
