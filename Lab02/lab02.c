@@ -22,6 +22,7 @@ Instructions:
   your repo and push the solution by 11:59PM of the day of the lab.
 **************************************************************/
 
+#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
