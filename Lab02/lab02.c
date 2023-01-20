@@ -85,7 +85,6 @@ int main(int argc, char** argv)
   apply_by_col(print_str, data, data_rows, data_cols);
 
   free_data(data, data_rows, data_cols);
-  // TODO: add your test calls for parts (3) and (5) here
 
   return 0;
 }
