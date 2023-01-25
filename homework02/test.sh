@@ -23,3 +23,5 @@ echo "FILE 2 IS SHORTER"
 
 echo "BOTH FILES EXIST AND SAME LENGTH"
 ./a.out file_1.txt file_2.txt out_file_3.txt
+
+diff out_file_3.txt file_3.txt

@@ -42,26 +42,38 @@ int get_num_ints(char** argv)
     FILE *file_1, *file_2;
     int error = 0;
     int n_integers = 0;
-    char *buffer[MAX_NUM_LENGTH];
+    char buffer[MAX_NUM_LENGTH];
+    char *file1_line, *file2_line;
+
     file_1 = fopen(argv[1], "r");
-    file_2 = fopen(argv[2], "r");
-
-    if (file_1 == NULL || file_2 == NULL) {
-        error = 1;
+    if (file_1 == NULL) {
+        fprintf(stderr, "Error opening %s\n", argv[1]);
+        exit(EXIT_FAILURE);
     }
-    else {
-        while (fgets(buffer, sizeof(buffer), file_1) != NULL) {
+
+    file_2 = fopen(argv[2], "r");
+    if (file_2 == NULL) {
+        fprintf(stderr, "Error opening %s\n", argv[2]);
+        fclose(file_1);
+        exit(EXIT_FAILURE);
+    }
+
+    while (1) {
+        file1_line = fgets(buffer, sizeof(buffer), file_1);
+        file2_line = fgets(buffer, sizeof(buffer), file_2);
+        if (file1_line && file2_line) {
             n_integers++;
-            if (fgets(buffer, sizeof(buffer), file_2) == NULL) {
-
-            }
+        } else if (file1_line || file2_line) {
+            n_integers = -1;
+            break;
+        } else {
+            break;
         }
-
     }
 
     fclose(file_1);
     fclose(file_2);
-    if (error) exit(EXIT_FAILURE);
+    return n_integers;
 }
 
 
@@ -161,8 +173,8 @@ void save_output(char** argv, unsigned int* input_one, unsigned int* input_two,
    1991			2			1993
    11231245		21235			11252480
  */
-int main(int argc, char** argv)
-{
+
+int main(int argc, char** argv) {
     usage(argc, argv);
 
     // Check the number of integers in the input files
@@ -172,24 +184,38 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     } 
 
-    unsigned int* input_one = NULL;
-    unsigned int* input_two = NULL;
-    unsigned long int* output = NULL;
-    // Allocate memory to store the integers
-    allocate_mem(&input_one, &input_two, &output, num_ints);
-
-    // Read the integers from the two input files
-    get_ints(argv, input_one, input_two, output, num_ints);
-   
-    // Sum up the numbers
-    sum_ints(input_one, input_two, output, num_ints);
-
-    // Store the result in the output file 
-    save_output(argv, input_one, input_two, output, num_ints);
-
-    free(input_one);
-    free(input_two);
-    free(output);
-
-    return 0;
+    fprintf(stdout, "n integers %d\n", num_ints);
 }
+
+// int main(int argc, char** argv)
+// {
+//     usage(argc, argv);
+
+//     // Check the number of integers in the input files
+//     int num_ints = get_num_ints(argv);
+//     if(num_ints == -1) {
+//         fprintf(stderr, "ERR: The two input files have different # of ints\n");
+//         exit(EXIT_FAILURE);
+//     } 
+
+//     unsigned int* input_one = NULL;
+//     unsigned int* input_two = NULL;
+//     unsigned long int* output = NULL;
+//     // Allocate memory to store the integers
+//     allocate_mem(&input_one, &input_two, &output, num_ints);
+
+//     // Read the integers from the two input files
+//     get_ints(argv, input_one, input_two, output, num_ints);
+   
+//     // Sum up the numbers
+//     sum_ints(input_one, input_two, output, num_ints);
+
+//     // Store the result in the output file 
+//     save_output(argv, input_one, input_two, output, num_ints);
+
+//     free(input_one);
+//     free(input_two);
+//     free(output);
+
+//     return 0;
+// }
