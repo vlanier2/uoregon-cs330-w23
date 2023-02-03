@@ -175,6 +175,7 @@ void convert_coo_to_csr(int* row_ind, int* col_ind, double* val,
 {
     int i, index;
 
+    // allocate memory
     *csr_row_ptr = (unsigned int *)calloc(sizeof(unsigned int), m+1);
     if (csr_row_ptr == NULL)
         exit(EXIT_FAILURE);
@@ -192,6 +193,9 @@ void convert_coo_to_csr(int* row_ind, int* col_ind, double* val,
         exit(EXIT_FAILURE);
     }
 
+    // using a temp row pointer to position col and val index
+    // could be done by repositioning row ptrs to original values 
+    // but I thought this was easier
     unsigned int *temp_row_ptr = (unsigned int *)calloc(sizeof(unsigned int), m+1);
     if (temp_row_ptr == NULL) {
         free(*csr_row_ptr);
@@ -199,8 +203,6 @@ void convert_coo_to_csr(int* row_ind, int* col_ind, double* val,
         free(*csr_vals);
         exit(EXIT_FAILURE);
     }
-
-    printf("\n");
 
     // make histogram
     for (i = 0; i < nnz; ++i) {
@@ -213,42 +215,16 @@ void convert_coo_to_csr(int* row_ind, int* col_ind, double* val,
         (*csr_row_ptr)[i] += (*csr_row_ptr)[i - 1];
         temp_row_ptr[i] += temp_row_ptr[i - 1];
     }
-    
-    //__________________________________________________________________
-    printf("\n");
 
-    for (int i = 0; i < 3; i++) {
-        printf("%d row pointer \n", (*csr_row_ptr)[i]);
-        printf("%d !!! \n", temp_row_ptr[i]);
-    }
-
+    // index col/val to correct position ("sorts by row")
     for (i = 0; i < nnz; ++i) {  
-
-
-        printf("index %d to pointer %d\n", row_ind[i], temp_row_ptr[row_ind[i] - 1]);
-
-
         index = temp_row_ptr[row_ind[i] - 1];
         (*csr_col_ind)[index] = col_ind[i];
         (*csr_vals)[index] = val[i];
         temp_row_ptr[row_ind[i] - 1]++;
     }
 
-    // for (i = m; i > 0; --i) {
-    //     (*csr_row_ptr)[i] = (*csr_row_ptr)[i - 1];
-    // }
-    // (*csr_row_ptr)[0] = 0;
     free(temp_row_ptr);
-
-    for (int i = 0; i < 4; i++) {
-        printf("%d %d %f \n", row_ind[i], col_ind[i], val[i]);
-        //printf("%d %d %f \n", row_ind[i], col_ind[i], val[i]);
-        //printf("%d\n", (*csr_row_ptr)[i]);
-    }
-
-    for (int i = 0; i < 4; i++) {
-        printf("%d %f \n", (*csr_col_ind)[i], (*csr_vals)[i]);
-    }
 }
 
 /* This function reads in a vector from a text file, similar in format to
@@ -319,23 +295,13 @@ void spmv(unsigned int* csr_row_ptr, unsigned int* csr_col_ind,
           double* csr_vals, int m, int n, int nnz, 
           double* vector_x, double* res)
 {
-
-    printf("\n now in spmv \n");
-
     for (int i = 0; i < m; ++i) { //for each row (or res index)
         res[i] = 0;
-
-        printf("%d to %d \n ", csr_row_ptr[i], csr_row_ptr[i + 1]);
-
         for (int j = csr_row_ptr[i]; j < csr_row_ptr[i + 1]; ++j) {
-
-            printf("adding %f, %f * %f \n", csr_vals[j] * vector_x[csr_col_ind[j] - 1], csr_vals[j], vector_x[csr_col_ind[j] - 1]);
-
             res[i] += (csr_vals[j] * vector_x[csr_col_ind[j] - 1]);
         }
     }
 }
-
 
 /* This function stores a vector in a text file, similar in format to
    the Matrix Market format.
