@@ -8,6 +8,10 @@ Implementation file for the error reporting system
 
 #include <ohno.h>
 
+// Might fix with library?
+#include <stdlib.h>
+#include <string.h>
+
 static struct ohno_state *state;
 
 /*
@@ -21,6 +25,18 @@ static struct ohno_state *state;
 int
 ohno_init(FILE* where_to, const char* app_name)
 {
+  state = (struct ohno_state*)malloc(sizeof(struct ohno_state)); 
+  if (state == NULL)
+    return 1;
+  state->name = (char *)malloc(sizeof(char) * strlen(app_name) + 1);
+  if (state->name == NULL) {
+    free(state);
+    return 1;
+  }
+  state->out = where_to;
+  state->error_number = 0;
+
+  strcpy(state->name, app_name);
   return 0;
 }
 
@@ -32,6 +48,8 @@ ohno_init(FILE* where_to, const char* app_name)
 void
 ohno_free()
 {
+  free(state->name);
+  free(state);
 }
 
 /*
@@ -45,4 +63,20 @@ ohno_free()
 void
 ohno(const char* message, ohno_severity_t severity)
 {
+  switch(severity) {
+    case OHNO_WARNING :
+    fprintf(state->out, "ERROR WARNING: %s\n", message);
+    break;
+
+    case OHNO_SERIOUS :
+    fprintf(state->out, "ERROR SERIOUS: %s\n", message);
+    break;
+
+    case OHNO_FATAL :
+    fprintf(state->out, "ERROR OHNO_FATAL: %s\n", message);
+    break;
+
+    default :
+    fprintf(state->out, "ERROR UNKNOWN: %s\n", message);
+  }
 }
