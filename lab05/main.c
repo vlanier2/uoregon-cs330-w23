@@ -53,8 +53,10 @@ int main(int argc, char **argv) {
   }
 
   // Set values
-  for (j = 0; j < size; j++) {
-    num[i][j] = i * size + j;
+  for (i = 0; i < size; i++) {
+    for (j = 0; j < size; j++) {
+      num[i][j] = i * size + j;
+    }
   }
 
   // Print values
@@ -66,6 +68,9 @@ int main(int argc, char **argv) {
   }
 
   // Deallocate memory
+  for (i = 0; i < size; i++) {
+    free(num[i]);
+  }
   free(num);
 
   return 0;
