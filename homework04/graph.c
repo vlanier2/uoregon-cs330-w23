@@ -157,6 +157,25 @@ void construct_adj_list(int** adj_mat, int rows, int cols, adj_node_t*** list)
     // INSERT YOUR CODE HERE
     // HINT: You will need to use create_node() and add_node() here
     // Go through each vertex and construct its adjacency list
+    for (int i = 0; i < rows; ++i) {
+        myList[i] = create_node(i); // create node with vid row index
+
+        for (int j = 0; j < cols; ++j) { // for each col at that row
+            if (adj_mat[i][j])
+                add_node(myList, i, create_node(j));
+        }
+    }
+
+    // REMOVE
+    for (int i = 0; i < rows; ++i) { 
+        adj_node_t* node = myList[i];
+        while(node) {
+
+            printf("%d ", node->vid);
+            node = node->next;
+        }
+        printf("\n");
+    }
 
     fprintf(stdout, "done\n");
 }
