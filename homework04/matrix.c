@@ -87,12 +87,12 @@ void matrix_transpose(int** dst, int** src, int rows, int cols)
     assert(src);
     assert(rows == cols);
 
-    // INSERT YOUR CODE HERE
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            dst[j][i] = src[i][j];
+        }
+    }
 }
-
-
-
-
 
 
 /* This function 'resets a vetor to have all
@@ -112,6 +112,83 @@ void reset_vector(int* vector, int rows)
     }
 }
 
+
+
+// COPYING FROM PROJECT 3 NOT SURE IF EXPECTED ???? 
+
+void convert_to_coo(int** A, int row, int col, int* nnz, int** values, int** col_indices, int** row_indices) {
+    int i, j;
+    int count = 0;
+    int k = 0;
+
+    for (i = 0; i < row; i++) {
+        for (j = 0; j < col; j++) {
+            if (A[i][j] != 0) {
+                count++;
+            }
+        }
+    }
+
+    *values = (int*)malloc(count * sizeof(int));
+    assert(values);
+    *col_indices = (int*)malloc(count * sizeof(int));
+    assert(col_indices);
+    *row_indices = (int*)malloc(count * sizeof(int));
+    assert(row_indices);
+
+    for (i = 0; i < row; i++) {
+        for (j = 0; j < col; j++) {
+            if (A[i][j] != 0) {
+                (*values)[k] = A[i][j];
+                (*col_indices)[k] = j;
+                (*row_indices)[k] = i;
+                k++;
+            }
+        }
+    }
+
+    *nnz = count;
+}
+
+void convert_coo_to_csr(int* row_ind, int* col_ind, int* val, 
+                        int m, int n, int nnz,
+                        int** csr_row_ptr, int** csr_col_ind,
+                        int** csr_vals)
+
+{
+    int i, index;
+
+    // allocate memory
+    *csr_row_ptr = (int *)calloc(sizeof(int), m + 1);
+    assert(csr_row_ptr);
+
+    // *csr_col_ind = (int *)malloc(sizeof(int) * (nnz));
+    // assert(csr_col_ind);
+    // *csr_vals = (int*)malloc(sizeof(int) * (nnz));
+    // assert(csr_vals);
+
+    // make histogram
+    for (i = 0; i < nnz; ++i) {
+        (*csr_row_ptr)[row_ind[i] + 1]++;
+    }
+
+    // prefix sum
+    for (i = 1; i < m + 1; ++i) {
+        (*csr_row_ptr)[i] += (*csr_row_ptr)[i - 1];
+    }
+
+}
+
+void spmv(int* csr_row_ptr, int* csr_col_ind, 
+          int* csr_vals, int m, int n, int nnz, 
+          int* vector_x, int* res)
+{
+    for (int i = 0; i < m; ++i) { //for each row (or res index)
+        for (int j = csr_row_ptr[i]; j < csr_row_ptr[i + 1]; ++j) {
+            res[i] += (csr_vals[j] * vector_x[csr_col_ind[j]]);
+        }
+    }
+}
 
 /* SpMV-based BFS implementation
    input parameters:
@@ -179,23 +256,68 @@ void bfs_spmv(int** int_array, int rows, int cols, int source,
     int *dst = res;
 
     // Do BFS until done
+
+    int nnz;
+    int *values;
+    int *col_indices;
+    int *row_indices;
+    int* csr_row_ptr;
+    int* csr_col_ind;
+    int* csr_vals;
+    int neighbors;
+
+    convert_to_coo(int_array, rows, cols, &nnz, &values, &col_indices, &row_indices);
+
+
+    // printf("PRINTING HERE");
+    // print_vector(values, nnz);
+    // print_vector(col_indices, nnz);
+    // print_vector(row_indices, nnz);
+
+
+    convert_coo_to_csr(row_indices, col_indices, values, rows, 
+                    cols, nnz, &csr_row_ptr, &csr_col_ind, &csr_vals);
+
+    // print_vector(csr_vals, nnz);
+    // print_vector(csr_col_ind, nnz);
+    // print_vector(csr_row_ptr, rows + 1);
+
     while(!done) {
         // INSERT YOUR CODE HERE
 
         // given a vector of source vetices, find the neighbors
         // HINT: spmv 
+        spmv(csr_row_ptr, col_indices, values, rows, cols, nnz, src, dst);
+
+        // printf("RESULT AT ITER : %d", iter);
+        // print_vector(res, rows);
 
         // color the source vertices for this iteration `black'
+        neighbors = 0;
+
+        for (int i = 0; i < cols; i++) {
+            if (res[i] >= 1 && color[i] == 0) {
+                color[i] = 1;
+                distance[i] = iter;
+                src[i] = res[i];
+                res[i] = 0;
+                neighbors++;
+            }
+        }
 
         // store the distance for the newly discovered neighbors
-
         // Before we begin, eliminate vertices that have already been visited
+        iter++;
 
         // Check to see if no neighbors were found,
         // in which case, we are done
+        if (neighbors == 0) {
+            done = 1;
+        }
 
         // iter is equivalent to each `breadth' searched (i.e., distance from
         // the source vertex)
+
     }
 
     fprintf(stdout, "done\n");
@@ -204,6 +326,10 @@ void bfs_spmv(int** int_array, int rows, int cols, int source,
         print_bfs_matrix_result(rows, color, distance);
     #endif
 
+    free(values);
+    free(col_indices);
+    free(row_indices);
+    free(csr_row_ptr);
     free_2d_array(mat_trans, cols);
     free(vec);
     free(res);
