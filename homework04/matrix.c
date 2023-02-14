@@ -116,7 +116,8 @@ void reset_vector(int* vector, int rows)
 
 // COPYING FROM PROJECT 3 NOT SURE IF EXPECTED ???? 
 
-void convert_to_coo(int** A, int row, int col, int* nnz, int** values, int** col_indices, int** row_indices) {
+void convert_to_coo(int** A, int row, int col, int* nnz, 
+                    int** values, int** col_indices, int** row_indices) {
     int i, j;
     int count = 0;
     int k = 0;
@@ -150,22 +151,16 @@ void convert_to_coo(int** A, int row, int col, int* nnz, int** values, int** col
     *nnz = count;
 }
 
-void convert_coo_to_csr(int* row_ind, int* col_ind, int* val, 
-                        int m, int n, int nnz,
-                        int** csr_row_ptr, int** csr_col_ind,
-                        int** csr_vals)
+void convert_coo_to_csr(int* row_ind, 
+                        int m, int nnz,
+                        int** csr_row_ptr)
 
 {
-    int i, index;
+    int i;
 
     // allocate memory
     *csr_row_ptr = (int *)calloc(sizeof(int), m + 1);
     assert(csr_row_ptr);
-
-    // *csr_col_ind = (int *)malloc(sizeof(int) * (nnz));
-    // assert(csr_col_ind);
-    // *csr_vals = (int*)malloc(sizeof(int) * (nnz));
-    // assert(csr_vals);
 
     // make histogram
     for (i = 0; i < nnz; ++i) {
@@ -180,7 +175,7 @@ void convert_coo_to_csr(int* row_ind, int* col_ind, int* val,
 }
 
 void spmv(int* csr_row_ptr, int* csr_col_ind, 
-          int* csr_vals, int m, int n, int nnz, 
+          int* csr_vals, int m, 
           int* vector_x, int* res)
 {
     for (int i = 0; i < m; ++i) { //for each row (or res index)
@@ -249,7 +244,6 @@ void bfs_spmv(int** int_array, int rows, int cols, int source,
     assert(res);
     reset_vector(res, cols);
 
-
     int iter = 1;
     int done = 0;
     int *src = vec;
@@ -262,51 +256,31 @@ void bfs_spmv(int** int_array, int rows, int cols, int source,
     int *col_indices;
     int *row_indices;
     int* csr_row_ptr;
-    int* csr_col_ind;
-    int* csr_vals;
     int neighbors;
 
     convert_to_coo(int_array, rows, cols, &nnz, &values, &col_indices, &row_indices);
-
-
-    // printf("PRINTING HERE");
-    // print_vector(values, nnz);
-    // print_vector(col_indices, nnz);
-    // print_vector(row_indices, nnz);
-
-
-    convert_coo_to_csr(row_indices, col_indices, values, rows, 
-                    cols, nnz, &csr_row_ptr, &csr_col_ind, &csr_vals);
-
-    // print_vector(csr_vals, nnz);
-    // print_vector(csr_col_ind, nnz);
-    // print_vector(csr_row_ptr, rows + 1);
+    convert_coo_to_csr(row_indices, rows, nnz, &csr_row_ptr);
 
     while(!done) {
-        // INSERT YOUR CODE HERE
 
         // given a vector of source vetices, find the neighbors
-        // HINT: spmv 
-        spmv(csr_row_ptr, col_indices, values, rows, cols, nnz, src, dst);
-
-        // printf("RESULT AT ITER : %d", iter);
-        // print_vector(res, rows);
+        spmv(csr_row_ptr, col_indices, values, rows, src, dst);
 
         // color the source vertices for this iteration `black'
         neighbors = 0;
 
+        // store the distance for the newly discovered neighbors
+        // Before we begin, eliminate vertices that have already been visited
         for (int i = 0; i < cols; i++) {
-            if (res[i] >= 1 && color[i] == 0) {
-                color[i] = 1;
-                distance[i] = iter;
-                src[i] = res[i];
-                res[i] = 0;
-                neighbors++;
+            if (res[i] >= 1 && color[i] == 0) { // ignore colored verticies
+                color[i] = 1; // color new vertex
+                distance[i] = iter; // set distance
+                src[i] = res[i]; // new source is previous iter result
+                res[i] = 0; // reset result 
+                neighbors++; // count neighbors
             }
         }
 
-        // store the distance for the newly discovered neighbors
-        // Before we begin, eliminate vertices that have already been visited
         iter++;
 
         // Check to see if no neighbors were found,
@@ -314,10 +288,6 @@ void bfs_spmv(int** int_array, int rows, int cols, int source,
         if (neighbors == 0) {
             done = 1;
         }
-
-        // iter is equivalent to each `breadth' searched (i.e., distance from
-        // the source vertex)
-
     }
 
     fprintf(stdout, "done\n");
