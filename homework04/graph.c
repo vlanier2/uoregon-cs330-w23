@@ -161,20 +161,10 @@ void construct_adj_list(int** adj_mat, int rows, int cols, adj_node_t*** list)
         myList[i] = create_node(i); // create node with vid row index
 
         for (int j = 0; j < cols; ++j) { // for each col at that row
-            if (adj_mat[i][j])
-                add_node(myList, i, create_node(j));
+            if (adj_mat[i][j]) {
+                    add_node(myList, i, create_node(j));
+            }
         }
-    }
-
-    // REMOVE
-    for (int i = 0; i < rows; ++i) { 
-        adj_node_t* node = myList[i];
-        while(node) {
-
-            printf("%d ", node->vid);
-            node = node->next;
-        }
-        printf("\n");
     }
 
     fprintf(stdout, "done\n");
@@ -284,18 +274,48 @@ void bfs(adj_node_t** list, int rows, int source,
     // color should be initialized to 0
     // distance should be initialized to -1 for infinity
     // parent should be initialized to -1 for NIL
+    for (int i = 0; i < rows; i++) {
+        color[i] = 0;
+        distance[i] = -1;
+        parent[i] = -1;
+    }
 
     // Initialize the source vertex
     // distance for the source vertex is 0, so it should be initialized as such
     // it has no parent, so initialize it to -1
     // color should be initialized to 1
+    distance[source] = 0;
+    color[source] = 1;
+    parent[source] = -1;
 
     // Initialize the queue with the source vertex
     // HINT: use create_node(source) and add_node
 
+    adj_node_t *queue = create_node(source);
+    adj_node_t *current_node;
+    int distance_level = 0;
+
     // bfs iteration
     // HINT: use remove_node (to fetch & dequeu the vertex)
     // HINT: you will also need create_node an add_node here
+    while (queue) {
+
+        current_node = list[remove_node(&queue)];
+        distance_level = distance[current_node->vid];
+
+        while (current_node->next != NULL) {
+            int neighbor_vid = current_node->next->vid;
+
+            if (color[neighbor_vid] == 0) {
+                distance[neighbor_vid] = distance_level + 1;    
+                color[neighbor_vid] = 1;
+                parent[neighbor_vid] = current_node->vid;
+                add_node(&queue, 0, create_node(neighbor_vid));
+            }
+
+            current_node = current_node->next;
+        }
+    }
 
    fprintf(stdout, "done\n");
 
