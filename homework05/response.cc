@@ -34,11 +34,6 @@ string Word::lower()
 */
 bool Response::checkAndRespond(const string& inWord, ostream& toWhere)
 {
-    // TODO:
-    // This method should check if the current object's keyword is in the
-    // input message (inWord), and send the proper response to the toWhere
-    // output stream
-    // String class provides the function 'find' which you might find useful
     size_t pos = inWord.find(this->keyword.upper());
 
     if (pos != std::string::npos) {
@@ -51,31 +46,16 @@ bool Response::checkAndRespond(const string& inWord, ostream& toWhere)
 
 void Response::respond(ostream& toWhere)
 {
-  // TODO:
-  // This method should 'insert' "I am neither angry nor happy: " followed by
-  // the object's response word to the toWhere output stream, along with
-  // a newline at the end
   toWhere << "I am neither angry nor happy: " << this->response << std::endl;
 }
 
 
 void AngryResponse::respond(ostream& toWhere)
 {
-  // TODO:
-  // Implement the 'respond' member function for the AngryResponse class so that
-  // the angry rseponse "I am angry: " followed by the object's response word 
-  // is inserted to the toWhere output stream, along with a newline at the end
   toWhere << "I am angry: " << this->response << std::endl;
 }
 
 
-/*
-  Implementation of HappyResponse methods
-*/
-// TODO:
-// Implement the 'respond' member function for the HappyResponse class so that
-// the happy rseponse "I am happy: " followed by the object's response word 
-// is inserted to the toWhere output stream, along with a newline at the end
 void HappyResponse::respond(ostream& toWhere) 
 {
   toWhere << "I am happy: " << this->response << std::endl;
