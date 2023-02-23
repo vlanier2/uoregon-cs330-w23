@@ -2,7 +2,7 @@
 
 echo "TEST ONE"
 
-./ai test1/input.txt test2/message.txt test1_out.txt
+./ai test1/input.txt test1/message.txt test1_out.txt
 
 diff test1_out.txt test1/result.txt
 
