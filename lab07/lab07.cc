@@ -113,8 +113,17 @@ getPositiveNumber(int &result, int setOnError)
 int
 getPositiveNumber(float &result)
 {
-  // TODO: Enter your code here
-  return -1;
+  // This is essentially C++ for `fprintf(stdout, "Enter a positive integer: ");`
+  cout << "Enter a positive float: ";
+
+  // This is essentially C++ for `fscanf(stdin, "%d", &result);`
+  cin >> result;
+
+  if (validate(result)) {
+    return 0;
+  } else {
+    return -1;
+  }
 }
 
 
@@ -128,8 +137,16 @@ template<class T>
 int
 getNegativeNumber(T &result)
 {
-  // TODO: Enter your code here
-  return -1;
+
+  cout << "Enter a negative number (integer then float): " ;
+
+  cin >> result;
+
+  if (validate(result, CheckOpNegative)) {
+    return 0;
+  } else {
+    return -1;
+  }
 }
 
 
@@ -161,7 +178,11 @@ main()
 
 
   // TODO Make a test call to your getPositiveNumber(float) function
-
+  if (getPositiveNumber(f) != 0) {
+    cerr << "Invalid input" <<endl;
+  } else {
+    cout << "f is now " << f << endl;
+  }
 
   // The compiler will generate code from the template for
   // getNegativeNumber(int) because i is an int here.
