@@ -18,12 +18,12 @@ rm errfile
 
 echo "TEST 1 caesar"
 ./cipher -mc -i test1/caesar/caesar.txt -o testfile
-diff test1/caesar/caesar.txt testfile
+diff test1/caesar/caesar_out.txt testfile
 rm testfile
 
 echo "TEST 2 caesar"
 ./cipher -mc -i test2/caesar/caesar.txt -o testfile
-diff test2/caesar/caesar.txt testfile
+diff test2/caesar/caesar_out.txt testfile
 rm testfile
 
 echo "TEST 3 caesar ERROR"
