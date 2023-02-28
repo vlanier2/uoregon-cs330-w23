@@ -86,15 +86,14 @@ string Cipher::decrypt(string enc)
     
     retStr.resize(enc.length());
     unsigned int substitution_index;
-    string std_alpha = "abcdefghijklmnopqrstuvwxyz";
 
     for (unsigned int i = 0; i < enc.length(); ++i) {
         substitution_index = find_pos(smile->cipher_alpha, tolower(enc[i]));
         if (enc[i] == ' ') {
             retStr[i] = ' ';
         } else {
-            char enc_char = std_alpha[substitution_index];
-            retStr[i] = isupper(enc[i]) ? toupper(enc_char) : enc_char;
+            char enc_char = 'A' + substitution_index;
+            retStr[i] = isupper(enc[i]) ? enc_char : tolower(enc_char);
         }
     }
 
