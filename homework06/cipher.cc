@@ -1,4 +1,5 @@
 #include "cipher.h"
+#include <string.h>
 
 /* Cheshire smile implementation.
    It only contains the cipher alphabet
@@ -21,7 +22,8 @@ bool is_valid_alpha(string alpha);
  */
 Cipher::Cipher()
 {
-    // TODO: Implement this default constructor 
+    smile = new CipherCheshire;
+    smile->cipher_alpha = "abcdefghijklmnopqrstuvwxyz";
 }
 
 /* This constructor initiates the object with a
@@ -29,14 +31,20 @@ Cipher::Cipher()
  */
 Cipher::Cipher(string cipher_alpha)
 {
-    // TODO: Implement this constructor
+    if (!is_valid_alpha(cipher_alpha)) {
+        cerr << "Invalid cipher alphabet/key: " << cipher_alpha << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    smile = new CipherCheshire;
+    smile->cipher_alpha = cipher_alpha;
 }
 
 /* Destructor
  */
 Cipher::~Cipher()
 {
-    // TODO: Implement this constructor
+    delete smile;
 }
 
 /* This member function encrypts the input text 
@@ -46,7 +54,21 @@ string Cipher::encrypt(string raw)
 {
     cout << "Encrypting...";
     string retStr;
-    // TODO: Finish this function
+
+    retStr.resize(raw.length());
+    unsigned int substitution_index;
+
+    for (unsigned int i = 0; i < raw.length(); ++i) {
+        substitution_index = toupper(raw[i]) - 'A';
+        if (raw[i] == ' ') {
+            retStr[i] = ' ';
+        } else {
+            char enc_char = smile->cipher_alpha[substitution_index];
+            retStr[i] = isupper(raw[i]) ? toupper(enc_char) : enc_char;
+        }
+    }
+
+    //cout << retStr << endl;
 
     cout << "Done" << endl;
 
@@ -59,9 +81,24 @@ string Cipher::encrypt(string raw)
  */
 string Cipher::decrypt(string enc)
 {
-    string retStr;
     cout << "Decrypting...";
-    // TODO: Finish this function
+    string retStr;
+    
+    retStr.resize(enc.length());
+    unsigned int substitution_index;
+    string std_alpha = "abcdefghijklmnopqrstuvwxyz";
+
+    for (unsigned int i = 0; i < enc.length(); ++i) {
+        substitution_index = find_pos(smile->cipher_alpha, tolower(enc[i]));
+        if (enc[i] == ' ') {
+            retStr[i] = ' ';
+        } else {
+            char enc_char = std_alpha[substitution_index];
+            retStr[i] = isupper(enc[i]) ? toupper(enc_char) : enc_char;
+        }
+    }
+
+    //cout << retStr << endl;
 
     cout << "Done" << endl;
 
@@ -77,9 +114,7 @@ string Cipher::decrypt(string enc)
 unsigned int find_pos(string alpha, char c)
 {
     unsigned int pos = 0;
-
-    // TODO: You will likely need this function. Finish it.
-
+    pos = alpha.find(c);
     return pos;
 }
 
