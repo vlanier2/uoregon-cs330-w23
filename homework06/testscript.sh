@@ -31,5 +31,15 @@ echo "TEST 3 caesar ERROR"
 diff test3_error/caesar/cout_error errfile
 rm errfile
 
+echo "TEST 1 ROT13"
+./cipher -mr -i test1/rot13/rot13.txt -o testfile
+diff test1/rot13/rot13_out.txt testfile
+rm testfile
+
+echo "TEST 2 ROT13"
+./cipher -mr -i test2/rot13/rot13.txt -o testfile
+diff test2/rot13/rot13_out.txt testfile
+rm testfile
+
 echo "REALITY CHECK"
 diff test1/subs/substitution_out.txt test1/subs/substitution.txt
