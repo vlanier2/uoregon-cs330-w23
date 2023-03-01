@@ -6,9 +6,12 @@
 using namespace std;
 
 struct KCipher::CipherCheshire {
-    string cipher_alpha;
     vector<string> cipher_book;
     unsigned int page_id;
+};
+
+struct Cipher::CipherCheshire {
+    string cipher_alpha;
 };
 
 /* Helper function definitions
@@ -22,7 +25,19 @@ string remove_spaces(string in_str) {
     }
 
     return temp;
-} 
+}
+
+bool is_alpha_char(char c)
+{
+    return (c >= 'a') && (c <= 'z');
+}
+
+bool is_key_valid(string key) {
+    for (char c: key) {
+        if (!is_alpha_char(c)) return false;
+    }
+    return true;
+}
 
 // -------------------------------------------------------
 // Running Key Cipher implementation
@@ -30,47 +45,49 @@ string remove_spaces(string in_str) {
 
 void KCipher::add_key(string page) {
     string temp = remove_spaces(page);
-    if (temp == "") {
-        cerr << "Invalid Running key: " << temp << endl; 
+    if (temp == "" || !is_key_valid(temp)) {
+        cerr << "Invalid Running key: " << page << endl;
         exit(EXIT_FAILURE);
     }
 
-    smile->cipher_book.push_back(page);
+    ksmile->cipher_book.push_back(page);
 }
 
 void KCipher::set_id(unsigned int page_number) {
-    smile->page_id = page_number;
+    ksmile->page_id = page_number;
 }
 
-KCipher::KCipher() {
-    smile = new KCipher::CipherCheshire;
-    smile->cipher_alpha = "abcdefghijklmnopqrstuvwxyz";
-    this->add_key(string(MAX_LENGTH, 'A'));
+KCipher::KCipher() : Cipher() {
+    ksmile = new KCipher::CipherCheshire;
+    this->add_key(string(MAX_LENGTH, 'a'));
     this->set_id(0);
 }
 
 KCipher::KCipher(string page) {
 
-    smile = new KCipher::CipherCheshire;
-    smile->cipher_alpha = "abcdefghijklmnopqrstuvwxyz";    
-    smile->cipher_book = vector<string>();
+    ksmile = new KCipher::CipherCheshire;
+    ksmile->cipher_book = vector<string>();
 
     this->add_key(page);
     this->set_id(0);
 }
 
+KCipher::~KCipher() {
+    delete ksmile;
+}
+
 string KCipher::encrypt(string raw) {
 
-    if (smile->page_id > smile->cipher_book.size()) {
-        cerr << "Warning: invalid id: " << smile->page_id << endl;
+    if (ksmile->page_id > ksmile->cipher_book.size() - 1) {
+        cerr << "Warning: invalid id: " << ksmile->page_id << endl;
         exit(EXIT_FAILURE);
     }
 
     string raw_no_spaces = remove_spaces(raw);
-    string key_page = remove_spaces(smile->cipher_book[smile->page_id]);
+    string key_page = remove_spaces(ksmile->cipher_book[ksmile->page_id]);
 
     if (raw_no_spaces.length() > key_page.length()) {
-        cerr << "Invalid Running key: " << smile->cipher_book[smile->page_id] << endl;
+        cerr << "Invalid Running key: " << ksmile->cipher_book[ksmile->page_id] << endl;
     }
 
     cout << "Encrypting...";
@@ -111,7 +128,7 @@ string KCipher::decrypt(string enc) {
     string retStr;
     string::iterator enc_iter, page_iter;
     
-    string key_page = remove_spaces(smile->cipher_book[smile->page_id]);
+    string key_page = remove_spaces(ksmile->cipher_book[ksmile->page_id]);
     enc_iter = enc.begin();
     page_iter = key_page.begin();
 
@@ -126,10 +143,8 @@ string KCipher::decrypt(string enc) {
             page_iter++;
         }
     }
-    
-    cout << "Done" << endl;
 
-    //cout << retStr << endl;
+    cout << "Done" << endl;
 
     return retStr;
 }

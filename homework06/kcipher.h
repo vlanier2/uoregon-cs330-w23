@@ -15,15 +15,18 @@ const unsigned int MAX_LENGTH = 100;
 class KCipher : public Cipher {
 protected:
    struct CipherCheshire;
-   CipherCheshire *smile;
+   CipherCheshire *ksmile;
 
 public:
    KCipher();
    KCipher(string page);
+   ~KCipher();
    void add_key(string page);
    void set_id(unsigned int page_number);
    string encrypt(string raw);
    string decrypt(string enc);
 };
+
+bool is_key_valid(string key);
 
 #endif
