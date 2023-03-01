@@ -68,8 +68,6 @@ string Cipher::encrypt(string raw)
         }
     }
 
-    //cout << retStr << endl;
-
     cout << "Done" << endl;
 
     return retStr;
@@ -96,8 +94,6 @@ string Cipher::decrypt(string enc)
             retStr[i] = isupper(enc[i]) ? enc_char : tolower(enc_char);
         }
     }
-
-    //cout << retStr << endl;
 
     cout << "Done" << endl;
 
