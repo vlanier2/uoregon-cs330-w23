@@ -69,5 +69,23 @@ rm errfile
 # _______________________________________
 
 
+echo "TEST 1 Vigenere"
+./cipher -mv -i test1/vigenere/vigenere.txt -o testfile
+diff test1/vigenere/vigenere_out.txt testfile
+rm testfile
+
+echo "TEST 2 Vigenere"
+./cipher -mv -i test2/vigenere/vigenere.txt -o testfile
+diff test2/vigenere/vigenere_out.txt testfile
+rm testfile
+
+echo "TEST 3 Vigenere ERROR"
+./cipher -mv -i test3_error/vigenere/vigenere.txt -o testfile 2> errfile
+diff test3_error/vigenere/cout_error errfile
+rm errfile
+
+# _______________________________________
+
+
 echo "REALITY CHECK"
 diff test1/subs/substitution_out.txt test1/subs/substitution.txt
