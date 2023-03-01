@@ -19,12 +19,7 @@ CCipher::CCipher(int offset) : Cipher() {
         exit(EXIT_FAILURE);
     }
 
-    //cout << this->smile->cipher_alpha << endl;
-
-    rotate_string(this->smile->cipher_alpha, offset);
-
-    //cout << this->smile->cipher_alpha << endl;
-
+    rotate_string(smile->cipher_alpha, offset);
 }
 
 // -------------------------------------------------------
@@ -32,13 +27,7 @@ CCipher::CCipher(int offset) : Cipher() {
 void reverse_str_segment(string& in_str, unsigned int left, unsigned int right) {
     unsigned int mid = ((right - left) / 2) + left;
     char temp;
-
-    //cout << "entered reverse str" << endl;
-    
     for (unsigned int i = left; i <= mid; ++i) {
-
-        //cout << "mid " << mid << " swapping " << in_str[i] << " and " << in_str[right] << endl;
-
         temp = in_str[i];
         in_str[i] = in_str[right];
         in_str[right] = temp;
