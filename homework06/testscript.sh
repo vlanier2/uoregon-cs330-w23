@@ -41,5 +41,33 @@ echo "TEST 2 ROT13"
 diff test2/rot13/rot13_out.txt testfile
 rm testfile
 
+# _______________________________________
+
+echo "TEST 1 Running Key"
+./cipher -mk -i test1/running_key/running_key.txt -o testfile
+diff test1/running_key/running_key_out.txt testfile
+rm testfile
+
+echo "TEST 2 Running Key"
+./cipher -mk -i test2/running_key/running_key.txt -o testfile
+diff test2/running_key/running_key_out.txt testfile
+rm testfile
+
+echo "TEST 3 Running Key ERROR"
+./cipher -mk -i test3_error/running_key/running_key_1.txt -o testfile 2> errfile
+diff test3_error/running_key/cout_error_1 errfile
+rm errfile
+
+./cipher -mk -i test3_error/running_key/running_key_2.txt -o testfile 2> errfile
+diff test3_error/running_key/cout_error_2 errfile
+rm errfile
+
+./cipher -mk -i test3_error/running_key/running_key_3.txt -o testfile 2> errfile
+diff test3_error/running_key/cout_error_3 errfile
+rm errfile
+
+# _______________________________________
+
+
 echo "REALITY CHECK"
 diff test1/subs/substitution_out.txt test1/subs/substitution.txt
