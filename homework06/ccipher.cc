@@ -50,10 +50,11 @@ void reverse_str_segment(string& in_str, unsigned int left, unsigned int right) 
 void rotate_string(string& in_str, int rot)
 {
     unsigned int alpha_len = in_str.length();
-
-
     unsigned int split_index = rot % alpha_len;
-    //cout << "split index " << split_index << endl;
+
+    if (split_index == 0)
+        return;   
+
     reverse_str_segment(in_str, 0, split_index - 1);
     reverse_str_segment(in_str, split_index, alpha_len - 1);
     reverse_str_segment(in_str, 0, alpha_len - 1);
