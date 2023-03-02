@@ -24,6 +24,7 @@ CCipher::CCipher(int offset) : Cipher() {
 
 // -------------------------------------------------------
 
+// Reverses a string segment given by left : right
 void reverse_str_segment(string& in_str, unsigned int left, unsigned int right) {
     unsigned int mid = ((right - left) / 2) + left;
     char temp;
@@ -36,6 +37,7 @@ void reverse_str_segment(string& in_str, unsigned int left, unsigned int right) 
 }
 
 // Rotates the input string in_str by rot positions
+// uses fast rotation algorithm discussed in class
 void rotate_string(string& in_str, int rot)
 {
     unsigned int alpha_len = in_str.length();

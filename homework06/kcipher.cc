@@ -5,6 +5,8 @@
 
 using namespace std;
 
+// We need a second smile to keep track of the 
+// key pages and the current page selected
 struct KCipher::CipherCheshire {
     vector<string> cipher_book;
     unsigned int page_id;
@@ -44,7 +46,10 @@ bool is_key_valid(string key) {
 // -------------------------------------------------------
 
 void KCipher::add_key(string page) {
+
     string temp = remove_spaces(page);
+
+    // if the key is empty or contains invalid chars exit
     if (temp == "" || !is_key_valid(temp)) {
         cerr << "Invalid Running key: " << page << endl;
         exit(EXIT_FAILURE);
@@ -58,35 +63,42 @@ void KCipher::set_id(unsigned int page_number) {
 }
 
 KCipher::KCipher() : Cipher() {
-    ksmile = new KCipher::CipherCheshire;
-    this->add_key(string(MAX_LENGTH, 'a'));
+    ksmile = new KCipher::CipherCheshire; // create second smile
+
+    // a key of all 'A' will map to the unshifted alphabet in the tabula recta
+    this->add_key(string(MAX_LENGTH, 'a')); 
     this->set_id(0);
 }
 
 KCipher::KCipher(string page) {
 
-    ksmile = new KCipher::CipherCheshire;
-    ksmile->cipher_book = vector<string>();
-
+    ksmile = new KCipher::CipherCheshire; // create second smile
     this->add_key(page);
     this->set_id(0);
 }
 
+// new destructor is needed. as discussed in class no need to deal with the
+// first smile as the destructor for the base class will be called prior to the
+// destructor of the derived class
 KCipher::~KCipher() {
     delete ksmile;
 }
 
 string KCipher::encrypt(string raw) {
 
-    if (ksmile->page_id > ksmile->cipher_book.size() - 1) {
+    if (ksmile->page_id > ksmile->cipher_book.size() - 1) { // page id does not exist
         cerr << "Warning: invalid id: " << ksmile->page_id << endl;
         exit(EXIT_FAILURE);
     }
 
+    // Technically I dont need to remove all the spaces from the raw and key.
+    // I would just need to count the number of spaces and make a bit more 
+    // complicated iteration later on. I am leaving this for the sake of time
+    // constraints, but it could be optimized later.
     string raw_no_spaces = remove_spaces(raw);
     string key_page = remove_spaces(ksmile->cipher_book[ksmile->page_id]);
 
-    if (raw_no_spaces.length() > key_page.length()) {
+    if (raw_no_spaces.length() > key_page.length()) { // key is too short
         cerr << "Invalid Running key: " << ksmile->cipher_book[ksmile->page_id] << endl;
     }
 
@@ -96,20 +108,22 @@ string KCipher::encrypt(string raw) {
     string tableau;
     char enc_char;
 
+    // using some iterators for convienence. This is compiling with the makefile, so
+    // hopefully it is ok.
     string::iterator raw_iter, page_iter;
     raw_iter = raw.begin();
     page_iter = key_page.begin();
     
     while (*raw_iter) {
-        if (*raw_iter == ' ') {
+        if (*raw_iter == ' ') { // insert space if needed
             retStr += ' ';
             raw_iter++;
-        } else {
+        } else { // encrypt with 'on the fly' tableau discussed in class
             tableau = smile->cipher_alpha;
-            rotate_string(tableau, (toupper(*page_iter) - 'A'));
+            rotate_string(tableau, (toupper(*page_iter) - 'A')); // rotate by page char
 
-            enc_char = tableau[toupper(*raw_iter) - 'A'];
-            retStr += isupper(*raw_iter) ? toupper(enc_char) : enc_char;
+            enc_char = tableau[toupper(*raw_iter) - 'A']; // index by raw char
+            retStr += isupper(*raw_iter) ? toupper(enc_char) : enc_char; // handle case
 
             raw_iter++;
             page_iter++;
@@ -132,7 +146,8 @@ string KCipher::decrypt(string enc) {
     enc_iter = enc.begin();
     page_iter = key_page.begin();
 
-    while(*enc_iter) {
+    while(*enc_iter) {  // decrypted using 'math' method. Hopefully this is ok. 
+                        // I thought it was interesting to work out.
         if (*enc_iter == ' ') {
             retStr += ' ';
             enc_iter++;

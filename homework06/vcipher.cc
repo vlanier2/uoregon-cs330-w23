@@ -9,16 +9,15 @@ using namespace std;
 // -------------------------------------------------------
 // Running Key Cipher implementation
 // -------------------------------------------------------
-// struct VCipher::CipherCheshire {
-//     string cipher_alpha;
-//     vector<string> cipher_book;
-//     unsigned int page_id;
-// };
 
 string validate_and_convert_key(string in_str, unsigned int max_length);
 
 VCipher::VCipher() : KCipher() {}
 
+// Using this helper function to validate and convert the keyword to a 'key_page'
+// allows me to avoid redefining the cheshire here. I think it looks pretty clean, 
+// but im not sure if its good practice. Let me know if you are reading this and
+// have some time.
 VCipher::VCipher(string keyword) : KCipher(validate_and_convert_key(keyword, MAX_LENGTH)) {}
 
 string validate_and_convert_key(string in_str, unsigned int max_length) {
