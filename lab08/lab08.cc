@@ -92,10 +92,15 @@ namespace Mem {
     int Dequeue();
 
     // TODO: Add overloaded operator declarations and / or friend statements here
-
+    friend std::ostream& operator<<(std::ostream& os, IntQueue q);
+    friend IntQueue& operator<<(IntQueue& q, int i);
+    friend IntQueue& operator>>(IntQueue& q, int& os);
   };
 
   // TODO: Add prototypes for any of IntQueue's friends here
+    std::ostream& operator<<(std::ostream& os, IntQueue q);
+    IntQueue& operator<<(IntQueue& q, int i);
+    IntQueue& operator>>(IntQueue& q, int& os);
 }
 
 //
@@ -154,6 +159,31 @@ Mem::operator<<(std::ostream &s, Mem::Elem<T> *e)
 }
 
 // TODO: Add overloaded operator implementations here
+std::ostream& Mem::operator<<(std::ostream& os, Mem::IntQueue q) {
+  Elem<int> *head = q.head;
+  while (head) {
+    os << head->getData() << " ";
+    head = head->getNext();
+  }
+
+  return os;
+}
+
+Mem::IntQueue& Mem::operator<<(Mem::IntQueue& q, int i){
+  // std::cout << i << std::endl;
+  q.Enqueue(i);
+  return q;
+}
+
+Mem::IntQueue& Mem::operator>>(Mem::IntQueue& q, int& os) {
+  int curr = q.Dequeue();
+
+  //std::cout << "here" << curr << std::endl;
+
+  os = curr;
+  return q;
+}
+
 
 //
 // Test program 
@@ -175,12 +205,14 @@ main()
 
   // TODO: Add some code to test your overloaded operators
   // For example:
-  /*
+
   std::cout << std::endl << std::endl;
   int tmp[4];
 
   // Enqueue some items
+  std::cout << "enqueuing with <<" << std::endl;
   Q << 2 << 3 << 5 << 7;
+  //Q << 1;
 
   // Print the contents of the queue
   std::cout << Q << std::endl;
@@ -190,7 +222,6 @@ main()
 
   // Check one of the items we dequeued
   std::cout << tmp[3] << std::endl;
-  */
   
 
   return 0;
