@@ -57,6 +57,9 @@ public:
     // Modify tree
     void insert_node(Node* in);
     void delete_node(Node* out);
+    
+    // UNSURE TRANSPLANT
+    void transplant(Node* u, Node* v);
 
     // Find nodes in the tree
     Node* tree_min(); // minimum key value
