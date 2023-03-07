@@ -5,17 +5,24 @@
 // TODO: Implement this
 // BASIC function header is provided for so that the code will compile
 // The actual function header may be different 
-SNode::SNode() 
+SNode::SNode() : Node(SNode::num_students) 
 {
+    first = "";
+    last = "";
+    age = 0;
+    num_students++;
 }
 
 // Constructor
 // TODO: Implement this
 // BASIC function header is provided for so that the code will compile
 // The actual function header may be different 
-SNode::SNode(string f_, string l_, unsigned int a_)
+SNode::SNode(string f_, string l_, unsigned int a_) : Node(SNode::num_students)
 {
-
+    first = f_;
+    last = l_;
+    age = a_;
+    num_students++;
 }
 // Destructor
 SNode::~SNode()
@@ -29,22 +36,27 @@ unsigned int SNode::num_students = 0;
 void SNode::change_first(string f_)
 {
 // TODO: Implement this
+    this->first = f_;
 } 
 void SNode::change_last(string l_)
 {
 // TODO: Implement this
+    this->last = l_;
 } 
 string SNode::get_first()
 {
 // TODO: Implement this
+    return this->first;
 }
 string SNode::get_last()
 {
 // TODO: Implement this
+    return this->last;
 }
 unsigned int SNode::get_age()
 {
 // TODO: Implement this
+    return this->age;
 }
 // Print information about the student
 // do not change this
