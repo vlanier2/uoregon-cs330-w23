@@ -6,18 +6,31 @@
 Node::Node() {
 // TODO: Implement this
     key = 0;
-    parent = NULL;
-    left = NULL;
-    right = NULL;
+    parent = nullptr;
+    left = nullptr;
+    right = nullptr;
 }
 // Constructor
-Node::Node(int in) : Node() {
+Node::Node(int in) {
 // TODO: Implement this
     key = in;
+    parent = nullptr;
+    left = nullptr;
+    right = nullptr;
 }
 // Destructor
 Node::~Node() {
 // TODO: Implement this
+    if (left) {
+        delete left;
+        left = nullptr;
+    }
+    
+    if (right) {
+        delete right;
+        right = nullptr;
+    }
+
 }
 
 // Add parent 
@@ -85,13 +98,16 @@ void BST::inorder_walk(Node* in, ostream& to)
 BST::BST()
 {
 // TODO: Implement this
-    root = NULL;
+    root = nullptr;
 }
 // Destructor
 BST::~BST()
 {
 // TODO: Implement this
-    
+    if (root) {
+        delete root;
+        root = nullptr;
+    }
 }
 // Insert a node to the subtree
 void BST::insert_node(Node* in)
@@ -136,6 +152,11 @@ void BST::delete_node(Node* out)
         y->add_left(out->get_left());
         y->get_left()->add_parent(y);
     }
+
+    // disconnect out node from tree, so we dont free memory we need
+    out->add_left(nullptr);
+    out->add_right(nullptr);
+    delete out;
 }
 // minimum key in the BST
 Node* BST::tree_min()
